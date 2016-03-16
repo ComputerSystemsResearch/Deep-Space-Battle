@@ -94,7 +94,7 @@
       //Could send this off to a method within the Gameplay class
       //and then return back once done.
          
-         gameplay.pauseMatch();
+         //gameplay.pauseMatch();
       	
          int parentX = (int)( container.getWidth() );
          int parentY = (int)( container.getHeight() );

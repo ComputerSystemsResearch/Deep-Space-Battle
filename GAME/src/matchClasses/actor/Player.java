@@ -4,10 +4,11 @@
    import java.awt.geom.Point2D;
    import java.awt.event.KeyEvent;
    
+   import GAME.src.state.gameplay.MatchConstants;
    import GAME.src.matchClasses.Vector2D;
    import GAME.src.matchClasses.object.Hitbox;
 
-   public class Player {
+   public class Player{
    
       // Character character
       private Hitbox hitbox;
@@ -21,58 +22,62 @@
    	// 5 - PRIMARY
    	// 6 - SECONDARY
    	
-      private Dimension characterActualSize; // unit: meters
+      private Dimension characterUnitSize; // unit: meters
       private Point2D playerCoords;
       private Vector2D playerVelocity;
       private Vector2D playerAcceleration;
-      private double maximumRunningSpeed;
-      private double runningAcceleration;
-      private double slidingDecceleration;
+      private double maximumRunningSpeed;   //(possibly) read from Chosen Character's stats
+      private double runningAcceleration;   //^^^ same
+      private double slidingDecceleration;  //^^^ same
    
-      private enum PlayerDirection { FACING_LEFT, FACING_RIGHT };
-      private enum PlayerActivity { IDLE, DUCK, DIVE, BLOCK, PRIMARY, SECONDARY };
-      private enum PlayerVerticalMotion { NONE, UP, DOWN };
-      private enum PlayerHorizontalMotion { NONE, LEFT, RIGHT };
-      private enum PlayerLifeState { ALIVE, DEAD, RESPAWNING };
+      //private enum PlayerDirection { FACING_LEFT, FACING_RIGHT };
+      //private enum PlayerActivity { IDLE, DUCK, DIVE, BLOCK, PRIMARY, SECONDARY };
+      //private enum PlayerVerticalMotion { NONE, UP, DOWN };
+      //private enum PlayerHorizontalMotion { NONE, LEFT, RIGHT };
+      //private enum PlayerLifeState { ALIVE, DEAD, RESPAWNING };
    
-      private PlayerDirection facing;
-      private PlayerActivity activity;
-      private PlayerHorizontalMotion xMotion;
-      private PlayerVerticalMotion yMotion;
-      private PlayerLifeState lifeStatus;
+      //private PlayerDirection facing;
+      //private PlayerActivity activity;
+      //private PlayerHorizontalMotion xMotion;
+      //private PlayerVerticalMotion yMotion;
+      //private PlayerLifeState lifeStatus;
    	
       private Dimension characterRenderSize;
    
-   //Default method
-      public Player ( int playerNumber, int lives ){
+   //Default Constructor
+      public Player ( int playerNumber ){
       
          playerNum = playerNumber;
          KOs = 0;
          livesLost = 0;
          jumpNumber = 0;
-         stock = lives;
+         stock = 5;
          damagePercentage = 0;
          screenOrder = 0;
-      
+         
+         playerCoords = new Point2D.Double( 0.0, 0.0 );
+         playerVelocity = new Vector2D( 0.0, 0.0 );
+         playerAcceleration = new Vector2D( 0.0, 0.0 );
+      	
+         maximumRunningSpeed = 10.0/MatchConstants.TICKS_PER_SECOND;        // 10   units/second
+         runningAcceleration = 5.0/(MatchConstants.TICKS_PER_SECOND*3);     // 5/3  units/s/s 
+         slidingDecceleration = -25.0/(MatchConstants.TICKS_PER_SECOND*6);  //-25/6 units/s/s
+      	
          if( playerNum == 1 ){
-            facing = PlayerDirection.FACING_RIGHT;
-            playerKeyCodes = new int[]{ KeyEvent.VK_W, KeyEvent.VK_S, KeyEvent.VK_A, KeyEvent.VK_D,
-                                        KeyEvent.VK_I, KeyEvent.VK_O, KeyEvent.VK_P };
-         //TODO
-            //Set Location to the maps starting Player 1 location
+            //facing = PlayerDirection.FACING_RIGHT;
+            playerKeyCodes = MatchConstants.P1_KEY_CODES;
+            //...
          }
          else if( playerNum == 2 ){
-            facing = PlayerDirection.FACING_LEFT;
-            playerKeyCodes = new int[]{ KeyEvent.VK_UP, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT,
-                                        KeyEvent.VK_NUMPAD1, KeyEvent.VK_NUMPAD2, KeyEvent.VK_NUMPAD3 };
-         //TODO
-            //Set Location to the maps starting Player 2 Location
+            //facing = PlayerDirection.FACING_LEFT;
+            playerKeyCodes = MatchConstants.P2_KEY_CODES;
+         	//...
          }
       
-         activity = PlayerActivity.IDLE;
-         xMotion = PlayerHorizontalMotion.NONE;
-         yMotion = PlayerVerticalMotion.NONE;
-         lifeStatus = PlayerLifeState.ALIVE;
+         //activity = PlayerActivity.IDLE;
+         //xMotion = PlayerHorizontalMotion.NONE;
+         //yMotion = PlayerVerticalMotion.NONE;
+         //lifeStatus = PlayerLifeState.ALIVE;
       
       }
    
@@ -83,7 +88,7 @@
       public int getPlayerNumber(){
          return playerNum;
       }    
-      public PlayerDirection getDirection(){
+      /*public PlayerDirection getDirection(){
          return facing;
       }
    
@@ -101,13 +106,13 @@
    
       public PlayerLifeState getLifeState(){
          return lifeStatus;
-      }
+      }*/
    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    
    
    //SET METHODS
    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~    
-      public void setDirection( PlayerDirection direction ){ }
+      /*public void setDirection( PlayerDirection direction ){ }
    
       public void setActivity( PlayerActivity activity ){ }
    
@@ -115,7 +120,7 @@
    
       public void setVerticalMotion( PlayerVerticalMotion yMotion ){ }
    
-      public void setLifeState( PlayerLifeState lifeState){ }
+      public void setLifeState( PlayerLifeState lifeState){ }*/
    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       
    	
