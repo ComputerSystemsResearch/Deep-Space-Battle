@@ -1,23 +1,22 @@
-package GAME.src.state.gameplay;  
+   package GAME.src.state.gameplay;  
 	
-import java.awt.event.KeyEvent;  
+   import java.awt.event.KeyEvent;  
 	
-public interface MatchConstants{
-   final int CODE_P1_UP = KeyEvent.VK_W;
-   final int CODE_P1_DOWN = KeyEvent.VK_S;
-   final int CODE_P1_LEFT = KeyEvent.VK_A;
-   final int CODE_P1_RIGHT = KeyEvent.VK_D;
-   final int CODE_P1_BLOCK = KeyEvent.VK_I;
-   final int CODE_P1_PRIMARY = KeyEvent.VK_O;
-   final int CODE_P1_SECONDARY = KeyEvent.VK_P;
-
-   final int CODE_P2_UP =  KeyEvent.VK_UP;
-   final int CODE_P2_DOWN = KeyEvent.VK_DOWN;
-   final int CODE_P2_LEFT = KeyEvent.VK_LEFT;
-   final int CODE_P2_RIGHT = KeyEvent.VK_RIGHT;
-   final int CODE_P2_BLOCK = KeyEvent.VK_NUMPAD1;
-   final int CODE_P2_PRIMARY = KeyEvent.VK_NUMPAD2;
-   final int CODE_P2_SECONDARY = KeyEvent.VK_NUMPAD3;
+   public final class MatchConstants{
    	
-   final int CODE_PAUSE = KeyEvent.VK_ESCAPE;
-}
+      public static final double VIEWPORT_ASPECT_RATIO = (16.0/9);
+   	
+		public static final int PAUSE_KEY_CODE = KeyEvent.VK_ESCAPE;
+      public static final int[] P1_KEY_CODES = new int[] { KeyEvent.VK_W, KeyEvent.VK_S, KeyEvent.VK_A, KeyEvent.VK_D,
+                                        KeyEvent.VK_I, KeyEvent.VK_O, KeyEvent.VK_P };
+      public static final int[] P2_KEY_CODES = new int[] { KeyEvent.VK_UP, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT,
+                                        KeyEvent.VK_NUMPAD1, KeyEvent.VK_NUMPAD2, KeyEvent.VK_NUMPAD3 };
+   	
+      public static final int TICKS_PER_SECOND = 25;
+      public static final int SKIP_TICKS = 1000000000 / TICKS_PER_SECOND;
+      public static final int MAX_FRAMESKIP = 5;
+   	
+      private MatchConstants(){
+         throw new AssertionError();
+      }
+   }
