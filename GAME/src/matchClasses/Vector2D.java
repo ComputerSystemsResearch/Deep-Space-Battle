@@ -10,16 +10,16 @@
          yComponent = y;
       }
    	
-      public double getXComponent(){
+      public double getX(){
          return xComponent;
       }
    	
-      public double getYComponent(){
+      public double getY(){
          return yComponent;
       }
    	
       public double getMagnitude(){
-         return Math.sqrt( Math.pow( getXComponent(), 2 ) + Math.pow( getYComponent(), 2 ) );
+         return Math.sqrt( Math.pow( getX(), 2 ) + Math.pow( getY(), 2 ) );
       }
    	
       public void set( double x, double y ){
@@ -27,16 +27,16 @@
          yComponent = y;
       }
    	
-      public void setXComponent( double x ){
+      public void setX( double x ){
          xComponent = x;
       }
    	
-      public void setYComponent( double y ){
+      public void setY( double y ){
          yComponent = y;
       }
    	
       public void scale( double xScale, double yScale ){
-         setXComponent( getXComponent() * xScale );
-         setYComponent( getYComponent() * yScale );
+         setX( getX() * xScale );
+         setY( getY() * yScale );
       }
    }

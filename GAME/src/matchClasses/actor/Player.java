@@ -23,24 +23,24 @@
    	// 6 - SECONDARY
    	
       private Dimension characterUnitSize; // unit: meters
-      private Point2D playerCoords;
-      private Vector2D playerVelocity;
-      private Vector2D playerAcceleration;
+      private Point2D position;
+      private Vector2D totalVelocity;
+      private Vector2D totalAcceleration;
       private double maximumRunningSpeed;   //(possibly) read from Chosen Character's stats
       private double runningAcceleration;   //^^^ same
       private double slidingDecceleration;  //^^^ same
    
-      //private enum PlayerDirection { FACING_LEFT, FACING_RIGHT };
+      private enum PlayerDirection { FACING_LEFT, FACING_RIGHT };
       //private enum PlayerActivity { IDLE, DUCK, DIVE, BLOCK, PRIMARY, SECONDARY };
       //private enum PlayerVerticalMotion { NONE, UP, DOWN };
       //private enum PlayerHorizontalMotion { NONE, LEFT, RIGHT };
-      //private enum PlayerLifeState { ALIVE, DEAD, RESPAWNING };
+      private enum PlayerLifeState { ALIVE, DEAD, RESPAWNING };
    
-      //private PlayerDirection facing;
+      private PlayerDirection facing;
       //private PlayerActivity activity;
       //private PlayerHorizontalMotion xMotion;
       //private PlayerVerticalMotion yMotion;
-      //private PlayerLifeState lifeStatus;
+      private PlayerLifeState lifeStatus;
    	
       private Dimension characterRenderSize;
    
@@ -55,21 +55,21 @@
          damagePercentage = 0;
          screenOrder = 0;
          
-         playerCoords = new Point2D.Double( 0.0, 0.0 );
-         playerVelocity = new Vector2D( 0.0, 0.0 );
-         playerAcceleration = new Vector2D( 0.0, 0.0 );
+         position = new Point2D.Double( 0.0, 0.0 );
+         totalVelocity = new Vector2D( 0.0, 0.0 );
+         totalAcceleration = new Vector2D( 0.0, 0.0 );
       	
          maximumRunningSpeed = 10.0/MatchConstants.TICKS_PER_SECOND;        // 10   units/second
          runningAcceleration = 5.0/(MatchConstants.TICKS_PER_SECOND*3);     // 5/3  units/s/s 
          slidingDecceleration = -25.0/(MatchConstants.TICKS_PER_SECOND*6);  //-25/6 units/s/s
       	
          if( playerNum == 1 ){
-            //facing = PlayerDirection.FACING_RIGHT;
+            facing = PlayerDirection.FACING_RIGHT;
             playerKeyCodes = MatchConstants.P1_KEY_CODES;
             //...
          }
          else if( playerNum == 2 ){
-            //facing = PlayerDirection.FACING_LEFT;
+            facing = PlayerDirection.FACING_LEFT;
             playerKeyCodes = MatchConstants.P2_KEY_CODES;
          	//...
          }
@@ -84,14 +84,15 @@
    
    //GET METHODS
    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   //public 
+   
       public int getPlayerNumber(){
          return playerNum;
-      }    
-      /*public PlayerDirection getDirection(){
+      }  
+   	  
+      public PlayerDirection getDirection(){
          return facing;
       }
-   
+      /*
       public PlayerActivity getActivity(){
          return activity;
       }
@@ -103,24 +104,24 @@
       public PlayerVerticalMotion getVerticalMotion(){
          return yMotion;
       }
-   
+      */
       public PlayerLifeState getLifeState(){
          return lifeStatus;
-      }*/
+      }
    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    
    
    //SET METHODS
    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~    
-      /*public void setDirection( PlayerDirection direction ){ }
-   
+      public void setDirection( PlayerDirection direction ){ }
+      /*
       public void setActivity( PlayerActivity activity ){ }
    
       public void setHorizontalMotion( PlayerHorizontalMotion xMotion ){ }
    
       public void setVerticalMotion( PlayerVerticalMotion yMotion ){ }
-   
-      public void setLifeState( PlayerLifeState lifeState){ }*/
+      */
+      public void setLifeState( PlayerLifeState lifeState){ }
    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       
    	
@@ -130,41 +131,64 @@
       public int[] getPlayerKeyCodes(){
          return playerKeyCodes;
       }
+   	
+      public Point2D getPos(){
+         return position;
+      }
+   	
+      public Vector2D getVel(){
+         return totalVelocity;
+      }
+   	
+      public Vector2D getAcc(){
+         return totalAcceleration;
+      }
+   	
    
       public void doMove( boolean[] keysDown ){
          
+         if( lifeStatus == PlayerLifeState.ALIVE ){
+         
+         }
+         else if( lifeStatus == PlayerLifeState.RESPAWNING ){
+         
+         }
+         else{
+         
+         }
+      	
       	
          /*if( !( keysDown[3] && keysDown[2])){
             if ( keysDown[3]){
-               if( p1XVelocity >= maxXVel )
-                  p1XVelocity = maxXVel;
+               if( totalVelocity.getX() >= maxXVel )
+                  totalVelocity.getX() = maxXVel;
                else
-                  p1XVelocity += movingAcceleration;
+                  totalVelocity.getX() += movingAcceleration;
             }
             else if( keysDown[2]){
-               if( p1XVelocity <= -1*maxXVel )
-                  p1XVelocity = -1*maxXVel;
+               if( totalVelocity.getX() <= -1*maxXVel )
+                  totalVelocity.getX() = -1*maxXVel;
                else
-                  p1XVelocity -= movingAcceleration;
+                  totalVelocity.getX() -= movingAcceleration;
             }
             else{
-               if( p1XVelocity > 0 ){
-                  if( p1XVelocity <= Math.abs(movingDecceleration) || (p1XVelocity + movingDecceleration )<= 0)
-                     p1XVelocity = 0;
+               if( totalVelocity.getX() > 0 ){
+                  if( totalVelocity.getX() <= Math.abs(movingDecceleration) || (totalVelocity.getX() + movingDecceleration )<= 0)
+                     totalVelocity.getX() = 0;
                   else
-                     p1XVelocity += movingDecceleration;
+                     totalVelocity.getX() += movingDecceleration;
                }
-               else if( p1XVelocity < 0 ){
-                  if( p1XVelocity >= movingDecceleration )
-                     p1XVelocity = 0;
+               else if( totalVelocity.getX() < 0 ){
+                  if( totalVelocity.getX() >= movingDecceleration )
+                     totalVelocity.getX() = 0;
                   else
-                     p1XVelocity -= movingDecceleration;
+                     totalVelocity.getX() -= movingDecceleration;
                }
                
             }
          }
       	
-      	p1X += p1XVelocity;
+      	position.getX() += totalVelocity.getX();
       	
       	*/
       	

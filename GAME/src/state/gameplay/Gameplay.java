@@ -94,7 +94,7 @@
          setBackground( Color.BLACK );
        //Hookup keyboard polling
          addKeyListener( keyboard );
-			                                    //ADD a new keyListener to handle escape key pausing
+      	                                    //ADD a new keyListener to handle escape key pausing
        //Initialize the Players Characters
           //TODO
       	 
@@ -105,7 +105,11 @@
          maxXVel = (10.0)/MatchConstants.TICKS_PER_SECOND; //10 units/second
          movingAcceleration = 5.0/(MatchConstants.TICKS_PER_SECOND*3);
          movingDecceleration = -25.0/(MatchConstants.TICKS_PER_SECOND*6);
-            	
+	     // 10 Times Slower
+         //movingAcceleration = 5.0/(MatchConstants.TICKS_PER_SECOND*30);
+         //movingDecceleration = -25.0/(MatchConstants.TICKS_PER_SECOND*60);
+			
+			   	
          p1Width = 1;
          p1Height = 2;
          //p1X = -1.0*( p1Width/2 );
@@ -258,8 +262,6 @@
       	
          p1X += p1XVelocity;
          //p1XDisplayCoord = (int)(this.getWidth()/2.0 + (this.getWidth()*(p1X))/mapSize.getWidth()-p1DisplayWidth );
-         p1XDisplayCoord = (int)(this.getWidth()/2.0 + (this.getWidth()*(p1X))/mapSize.getWidth()-p1DisplayWidth/2 );      
-         p1YDisplayCoord = (int)(this.getHeight()/2.0 - (this.getHeight()*(p1Y))/mapSize.getHeight()-p1DisplayHeight/2 ); 
       	
       	//INSTEAD OF THAT ^^^
       	        //DO THIS vvv
@@ -307,6 +309,9 @@
       // 3) Draw GUI Overlay
       
          //System.out.println("RENDERGAME: " + interpolation );
+      	
+         p1XDisplayCoord = (int)(this.getWidth()/2.0 + (this.getWidth()*(p1X))/mapSize.getWidth()-p1DisplayWidth/2 );      
+         p1YDisplayCoord = (int)(this.getHeight()/2.0 - (this.getHeight()*(p1Y))/mapSize.getHeight()-p1DisplayHeight/2 );
       	
          repaint();
       
