@@ -1,28 +1,20 @@
    package GAME.src.matchClasses.object;
 
-   import java.awt.Dimension;
-	
-	import GAME.src.matchClasses.Mappable;
-
    public class Hitbox {
-   
-      private Dimension size;
       
+		double width;
+		double height;
+		
       public Hitbox(){
-         size = new Dimension( 0, 0 );
+		   width = 0.0;
+			height = 0.0;
       }
    	
-      public Hitbox( Dimension size ){
-         this.size = size;
-      }
-   
-      public Dimension getSize(){
-         return size;   
-      }
-   
-      public void resize( Dimension newSize ){
-         if( !( newSize == null ) )
-            size = newSize;
-      }
+      public Hitbox( double width, double height ){
+         this.width = width;
+			this.height = height;
+		}
+		
+		
    
    }

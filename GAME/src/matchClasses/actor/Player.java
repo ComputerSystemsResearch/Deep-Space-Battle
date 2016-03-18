@@ -22,10 +22,12 @@
    	// 5 - PRIMARY
    	// 6 - SECONDARY
    	
-      private Dimension characterUnitSize; // unit: meters
-      private Point2D position;
-      private Vector2D totalVelocity;
-      private Vector2D totalAcceleration;
+      private Vector2D characterSize;       // units
+		
+      private Point2D position;             // units
+      private Vector2D totalVelocity;       // units/s
+      private Vector2D totalAcceleration;   // units/s/s
+   	
       private double maximumRunningSpeed;   //(possibly) read from Chosen Character's stats
       private double runningAcceleration;   //^^^ same
       private double slidingDecceleration;  //^^^ same
@@ -41,8 +43,6 @@
       //private PlayerHorizontalMotion xMotion;
       //private PlayerVerticalMotion yMotion;
       private PlayerLifeState lifeStatus;
-   	
-      private Dimension characterRenderSize;
    
    //Default Constructor
       public Player ( int playerNumber ){
@@ -55,13 +55,15 @@
          damagePercentage = 0;
          screenOrder = 0;
          
+         characterSize = new Vector2D( 1.0, 2.0 );
+			      	
          position = new Point2D.Double( 0.0, 0.0 );
          totalVelocity = new Vector2D( 0.0, 0.0 );
          totalAcceleration = new Vector2D( 0.0, 0.0 );
       	
-         maximumRunningSpeed = 10.0/MatchConstants.TICKS_PER_SECOND;        // 10   units/second
-         runningAcceleration = 5.0/(MatchConstants.TICKS_PER_SECOND*3);     // 5/3  units/s/s 
-         slidingDecceleration = -25.0/(MatchConstants.TICKS_PER_SECOND*6);  //-25/6 units/s/s
+         maximumRunningSpeed = 10.0/MatchConstants.TICKS_PER_SECOND;        //   10  units/second
+         runningAcceleration = 5.0/(MatchConstants.TICKS_PER_SECOND*3);     //  5/3  units/s/s 
+         slidingDecceleration = -25.0/(MatchConstants.TICKS_PER_SECOND*6);  //-25/6  units/s/s
       	
          if( playerNum == 1 ){
             facing = PlayerDirection.FACING_RIGHT;
@@ -84,7 +86,10 @@
    
    //GET METHODS
    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   
+      public int[] getPlayerKeyCodes(){
+         return playerKeyCodes;
+      }
+   	
       public int getPlayerNumber(){
          return playerNum;
       }  
@@ -113,38 +118,57 @@
    
    //SET METHODS
    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~    
-      public void setDirection( PlayerDirection direction ){ }
+      public void setDirection( PlayerDirection direction ){ 
+         facing = direction;
+      }
       /*
-      public void setActivity( PlayerActivity activity ){ }
+      public void setActivity( PlayerActivity activity ){ 
+   	   this.activity = activity;
+   	}
    
-      public void setHorizontalMotion( PlayerHorizontalMotion xMotion ){ }
+      public void setHorizontalMotion( PlayerHorizontalMotion xMotion ){ 
+   	   this.xMotion = xMotion;
+   	}
    
-      public void setVerticalMotion( PlayerVerticalMotion yMotion ){ }
+      public void setVerticalMotion( PlayerVerticalMotion yMotion ){ 
+   	   this.yMotion = yMotion;
+   	}
       */
-      public void setLifeState( PlayerLifeState lifeState){ }
+      public void setLifeState( PlayerLifeState lifeState){ 
+         lifeStatus = lifeState;
+      }
    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       
    	
    //PLAYER CONTROL
    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    
-      public int[] getPlayerKeyCodes(){
-         return playerKeyCodes;
-      }
-   	
+      //POSITION
       public Point2D getPos(){
          return position;
       }
-   	
-      public Vector2D getVel(){
-         return totalVelocity;
+      public void setPos( double xComp, double yComp ){
+         position.setLocation( xComp, yComp );
       }
    	
+      //VELOCITY	
+      public Vector2D getVel(){
+         return totalVelocity;
+      } 	
+      public void setVel( double xComp, double yComp ){
+         totalVelocity.set( xComp, yComp );
+      }
+   	
+   	//ACCELERATION
       public Vector2D getAcc(){
          return totalAcceleration;
       }
+      public void setAcc( double xComp, double yComp ){
+         totalAcceleration.set( xComp, yComp );
+      }
    	
-   
+   	//This is where the action happens
+   	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       public void doMove( boolean[] keysDown ){
          
          if( lifeStatus == PlayerLifeState.ALIVE ){
