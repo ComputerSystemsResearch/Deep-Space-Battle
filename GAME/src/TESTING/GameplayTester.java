@@ -43,10 +43,10 @@
       
       }
       public GameplayTester(){
-         initializeGame();
+         initializeTester();
       }
    
-      private void initializeGame(){
+      private void initializeTester(){
       
          System.out.println("Initializing GameplayTester...");
       
@@ -69,8 +69,7 @@
          container.setLayout( new GridBagLayout() );      
          container.setPreferredSize( new Dimension( 800, 450 ) );  
          container.setBackground( Color.BLACK ); 
-         container.add( gameplay );
-                        
+                  
          container.addComponentListener( 
                new ComponentAdapter()
                {
@@ -82,10 +81,12 @@
       
       //Displaying the panels    
          frame.getContentPane().add(container);
-      
+         container.add( gameplay );
          frame.pack();
       
          System.out.println("GameplayTester Initialized.");
+			
+			gameplay.start();
       
       }
    

@@ -15,12 +15,12 @@
    
    import GAME.src.state.gameplay.MatchConstants;
    import GAME.src.matchClasses.actor.Player;
-   import GAME.src.matchClasses.object.Item;
    import GAME.src.matchClasses.object.Hitbox;
 
    public class Gameplay extends JPanel implements Runnable {
-   
+      
       InputHandler keyboard = new InputHandler();
+      private boolean running = false;
       private boolean paused;
       private boolean gameOver;
       private enum GameType { TIMED, STOCK };
@@ -32,7 +32,7 @@
       private Player[] players;
       Player p1;
    //Animation loop variables	
-      boolean running;
+      
    //Map objects
       Dimension mapSize;
    //TESTING ONLY
@@ -66,10 +66,15 @@
       
       //Initializes key game objects/ Variables      
          defaultInitialize();    
-      //Starts the main thread
-         mainThread = new Thread( this );
-         mainThread.start();
       	
+      }
+   	
+      public synchronized void start(){
+         if(running)
+            return;		
+         running = true;
+         mainThread = new Thread(this); // Come back to set up safe stopping and suspension of the mainThread
+         mainThread.start();
       }
    	 
    //public Gameplay( Map map, ArrayList<Player> players, GameType type ){}
@@ -105,15 +110,13 @@
          maxXVel = (10.0)/MatchConstants.TICKS_PER_SECOND; //10 units/second
          movingAcceleration = 5.0/(MatchConstants.TICKS_PER_SECOND*3);
          movingDecceleration = -25.0/(MatchConstants.TICKS_PER_SECOND*6);
-	     // 10 Times Slower
+        // 10 Times Slower
          //movingAcceleration = 5.0/(MatchConstants.TICKS_PER_SECOND*30);
          //movingDecceleration = -25.0/(MatchConstants.TICKS_PER_SECOND*60);
-			
-			   	
+      	
+      	   	
          p1Width = 1;
          p1Height = 2;
-         //p1X = -1.0*( p1Width/2 );
-         //p1Y = 1.0*p1Height;
          p1X = -1.0*mapSize.getWidth()/4; //Should be pulled from the 
          p1Y = 0.0;
          p1XVelocity = 0.0;
@@ -192,27 +195,30 @@
    	
    	
       @Override
-      public void run() {
-      	
+      public void run() { // Take the run and start() method styles from
+      	                 // the Boot class in the MapStuff Folder
+         System.out.println("GAME START");	  
+         
          long next_game_tick = System.nanoTime();
          int loops;
          float interpolation;
-      	
-         running = true;      
-         while( !(isGameOver()) ){
+         while( running ){
+         
+            while( !(isGameOver()) ){
             
-            while(!(isMatchPaused())){
-            
-               loops = 0;
-               while( System.nanoTime() > next_game_tick && loops < MatchConstants.MAX_FRAMESKIP ){
-                  updateGame();
+               while(!(isMatchPaused())){
                
-                  next_game_tick += MatchConstants.SKIP_TICKS;
-                  loops++;
+                  loops = 0;
+                  while( System.nanoTime() > next_game_tick && loops < MatchConstants.MAX_FRAMESKIP ){
+                     updateGame();
+                  
+                     next_game_tick += MatchConstants.SKIP_TICKS;
+                     loops++;
+                  }
+               
+                  interpolation = (float)( System.nanoTime() + MatchConstants.SKIP_TICKS - next_game_tick) / (float)( MatchConstants.SKIP_TICKS );
+                  renderGame( interpolation );
                }
-            
-               interpolation = (float)( System.nanoTime() + MatchConstants.SKIP_TICKS - next_game_tick) / (float)( MatchConstants.SKIP_TICKS );
-               renderGame( interpolation );
             }
          }
       	
@@ -266,10 +272,11 @@
       	//INSTEAD OF THAT ^^^
       	        //DO THIS vvv
       	
-         p1.doMove( new boolean[] { keyboard.keyDown( p1Keys[0] ), keyboard.keyDown( p1Keys[1] ), 
+         /*p1.doMove( new boolean[] { keyboard.keyDown( p1Keys[0] ), keyboard.keyDown( p1Keys[1] ), 
                keyboard.keyDown( p1Keys[2] ), keyboard.keyDown( p1Keys[3] ), 
                keyboard.keyDown( p1Keys[4] ), keyboard.keyDown( p1Keys[5] ), 
                keyboard.keyDown( p1Keys[6] ) } );
+      	*/
       	
          if( keyboard.keyDown( KeyEvent.VK_ENTER ) ){
             System.out.println("Player 1 Coordinates: " + "( " + p1X + ", " + p1Y + " )");
