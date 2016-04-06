@@ -19,12 +19,14 @@
    import java.lang.Thread;
 
    import GAME.src.state.gameplay.*;
+   import GAME.src.maps.data.*;
 
    public class GameplayTester extends JFrame {
    
       private JFrame frame;
       private JPanel container;
-      private Gameplay gameplay; 
+      private Gameplay gameplay;
+      private Boot mapBoot;
    
       public static void main(String[] args) {
       
@@ -58,18 +60,21 @@
          frame.setResizable( true );
          frame.setVisible( true );
          frame.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
-         frame.setBackground( Color.WHITE );
-      
+         frame.setBackground( Color.BLACK );
+         
+      //Boot
+         mapBoot = new Boot();
+      	
       //gameplay screen
-         gameplay = new Gameplay();
+         gameplay = new Gameplay( mapBoot );
          gameplay.setFocusable( true );
       
       //container border frame
          container = new JPanel();
          container.setLayout( new GridBagLayout() );      
          container.setPreferredSize( new Dimension( 800, 450 ) );  
-         container.setBackground( Color.BLACK ); 
-                  
+         container.setBackground( Color.WHITE ); 
+               
          container.addComponentListener( 
                new ComponentAdapter()
                {
@@ -81,22 +86,22 @@
       
       //Displaying the panels    
          frame.getContentPane().add(container);
+         //frame.add( mapBoot );
          container.add( gameplay );
+         //container.add( mapBoot );
+         gameplay.add( mapBoot );  //necessary while Boot is generatng a buffer strategy
          frame.pack();
       
          System.out.println("GameplayTester Initialized.");
-			
-			gameplay.start();
       
+         gameplay.start();
       }
-   
+      
       public void resizeInnerPanel(){
       
       //Could send this off to a method within the Gameplay class
       //and then return back once done.
-         
-         //gameplay.pauseMatch();
-      	
+      
          int parentX = (int)( container.getWidth() );
          int parentY = (int)( container.getHeight() );
          double currentAspectRatio = 1.0*parentX/parentY;
@@ -126,5 +131,6 @@
          gameplay.resizeGraphics();
       
       }
+   	
    
    }
