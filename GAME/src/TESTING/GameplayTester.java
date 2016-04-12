@@ -86,9 +86,7 @@
       
       //Displaying the panels    
          frame.getContentPane().add(container);
-         //frame.add( mapBoot );
          container.add( gameplay );
-         //container.add( mapBoot );
          gameplay.add( mapBoot );  //necessary while Boot is generatng a buffer strategy
          frame.pack();
       

@@ -17,20 +17,26 @@
       private boolean running = false; //is Running?
       private Thread thread;
    
-      MapRepository repo = new MapRepository();
-      int[][] map1 = (int[][]) repo.getStorage().get(0);
-      TileGrid map = new TileGrid(map1);
+      MapRepository repo;
+      int[][] mapArray;
+      TileGrid map;
     //Tile primary = new Tile(0, 0, 15, 15, TileType.Primary);
     //Tile secondary = new Tile(100, 0, 15, 15, TileType.Secondary);
-      Tile bg = new Tile(-10, -10, WIDTH+20, HEIGHT+20, TileType.Background);
-      Tile mapTex = new Tile(-10, -10, WIDTH+20, HEIGHT+20, TileType.MapTex1);
+      Tile bg;
+      Tile mapTex;
    
-      public Boot(){
+      public Boot(){  // Default
       
-      //repo = new MapRepository();    
+         repo = new MapRepository();
+         mapArray = (int[][]) repo.getStorage().get(0);
+         map = new TileGrid( mapArray );
+         bg = new Tile(-10, -10, WIDTH+20, HEIGHT+20, TileType.Background);
+         mapTex = new Tile(-10, -10, WIDTH+20, HEIGHT+20, TileType.MapTex1);
       
-      
-      
+      }
+   	
+      public int[][] getMap(){
+         return mapArray;
       }
    	
       public synchronized void start(){
@@ -43,6 +49,9 @@
    
       public void run()	//game loop
       {
+      
+      /*
+      
          long lastTime = System.nanoTime();
          double amountOfTicks = 25.0;
          double ns = 1000000000 / amountOfTicks;
@@ -70,7 +79,13 @@
             }
          }
       
+      */
+      
       }
+   	
+   	
+   	
+   	
    //ticks = updates
       private void tick()
       {
@@ -98,7 +113,7 @@
       //--------------Draw Here--------------\\
          g.setColor(Color.black);
          drawTile(g, bg);
-         drawMap(g, map);
+         //drawMap(g, map);
          drawTile(g, mapTex);
          g.setColor(Color.white);
        //drawTile(g, primary);
@@ -119,14 +134,21 @@
          for(int i = 0; i<t.getMap().length; i++){
             for(int j = 0; j<t.getMap()[i].length; j++){
                Tile a = t.getMap()[i][j];
-               //g.drawImage(a.getImage(), a.getX(), a.getY(), a.getWidth(), a.getHeight(), null);
-				}
+               g.drawImage(a.getImage(), a.getX(), a.getY(), a.getWidth(), a.getHeight(), null);
+            }
          }
       }
+   	
+   	
+   	
+   	
       public static void main(String[] args)
       {
          //~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         new Window(WIDTH, HEIGHT, "Super Smash", new Boot()); //Calls Window constructor (sets up window and displays)
+         //new Window(WIDTH, HEIGHT, "Super Smash", new Boot()); //Calls Window constructor (sets up window and displays)
          //~~~~~~~~~~~~~~~~~~~~~~~~~~~   
       }
+   	
+   	
+   	
    }
