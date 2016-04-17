@@ -9,6 +9,11 @@
          xComponent = x;
          yComponent = y;
       }
+		
+		public Vector2D( Vector2D v ){
+		   xComponent = v.getX();
+		   yComponent = v.getY();
+		}
    
       public double getX(){
          return xComponent;
@@ -21,7 +26,12 @@
       public double getMagnitude(){
          return Math.sqrt( Math.pow( getX(), 2 ) + Math.pow( getY(), 2 ) );
       }
-   
+      
+		public void set( Vector2D v ){
+		   xComponent = v.getX();
+			yComponent = v.getY();
+		}
+		
       public void set( double x, double y ){
          xComponent = x;
          yComponent = y;
