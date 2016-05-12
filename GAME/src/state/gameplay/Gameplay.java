@@ -12,13 +12,15 @@
    import java.awt.image.BufferStrategy;  
    import java.io.*;
    import java.lang.Runnable;
+   import java.math.RoundingMode;
+   import java.text.DecimalFormat;
    import java.util.*;
 
    import javax.imageio.ImageIO;
    import javax.swing.ImageIcon;
-   import javax.swing.*;
    import javax.swing.Timer;
    import javax.swing.JPanel;
+   import javax.swing.JLabel;
    
    import GAME.resources.*;
    import GAME.src.state.gameplay.MatchConstants;
@@ -43,7 +45,7 @@
       private Thread mainThread;
    //Collection of GameObjects
    
-   //TESTING ONLY
+   //DISPLAY / TESTING
       Image originalBackground = null; 
       Image displayBackground = null;
    
@@ -89,16 +91,21 @@
       int[] mapPixelYCoords;
       double[] mapXCoords;
       double[] mapYCoords;
+   	
+   //HUD
+      JLabel timeLabel;
       
    //Stage collision troubleshooting
       Path2D stagePath = new Path2D.Double(); 
    
    //Other
-      int[][] keyIDs;    
-   
+      int[][] keyIDs; 
+   	   
+   //TIMING
       long tStart;
       Timer clock;
       int tCount = 0;
+      DecimalFormat timeFormat;
    
    //~~~~~~~~~~~~~ 	
    //DEFAULT Gameplay Object
@@ -106,6 +113,7 @@
       public Gameplay( Boot boot ) { // needs to be changed to allow for customized games
       
          mapBoot = boot;
+         numStock = MatchConstants.DEFAULT_STOCK;
          defaultInitialize();    
       
       }
@@ -139,6 +147,68 @@
          setMinimumSize( new Dimension( 800, 450 ) );
          setMaximumSize( new Dimension( 1600, 900 ) );
          setBackground( Color.BLACK );
+         setLayout(new GridBagLayout());
+         GridBagConstraints c = new GridBagConstraints();
+      	
+      //HUD
+         timeLabel = new JLabel("");
+         timeLabel.setFont(new Font( "Impact", Font.ITALIC, 24 ));
+         timeLabel.setOpaque(true);
+         timeLabel.setForeground( Color.WHITE );
+         timeLabel.setHorizontalAlignment(JLabel.LEFT);
+      	
+         JLabel buffer;
+      	
+      //Adding the HUD to the panel
+      
+      //Buffers
+         buffer = new JLabel("L BUFFER");
+         buffer.setOpaque(true);
+         buffer.setBackground(Color.GRAY);
+         c.gridx = 0;
+         c.gridy = 0;
+         c.gridwidth = 1;      
+         c.fill = GridBagConstraints.BOTH;
+         c.anchor = GridBagConstraints.CENTER;
+         //c.weightx = 1.0;
+         add(buffer, c);
+      	
+         buffer = new JLabel("R BUFFER");
+         buffer.setOpaque(true);
+         buffer.setBackground(Color.DARK_GRAY);
+         c.gridx = 2;
+         c.gridy = 0;
+         c.gridwidth = 1;
+         c.fill = GridBagConstraints.BOTH;
+         c.anchor = GridBagConstraints.CENTER;
+         add(buffer, c);
+      //Time
+         c.gridx = 1;
+         c.gridy = 0;
+         c.weightx = 1.0;
+         c.weighty = 1.0;
+         c.gridwidth = 1;
+         c.fill = GridBagConstraints.BOTH;
+         c.anchor = GridBagConstraints.FIRST_LINE_START;
+         add(timeLabel, c);
+      //Row - mid
+         c.gridx = 0;
+         c.gridy = 1;
+         c.weightx = 1.0;
+         c.weighty = 1.0;
+         c.gridwidth = 3;
+         c.fill = GridBagConstraints.BOTH;
+         c.anchor = GridBagConstraints.CENTER;
+         add(new JLabel("ROW 2"), c);
+      //Row - bottom
+         c.gridx = 0;
+         c.gridy = 2;
+         c.weightx = 1.0;
+         c.weighty = 1.0;
+         c.gridwidth = 3;
+         c.fill = GridBagConstraints.BOTH;
+         c.anchor = GridBagConstraints.CENTER;
+         add(new JLabel("ROW 3"), c);
       
       //Hookup keyboard polling
          this.addKeyListener( keyboard );
@@ -146,12 +216,10 @@
       //Initialize the Players Characters
       //TODO
       
-      //TESTING ONLY
+      //IMAGE TESTING ONLY
          try{
-         //originalBackground = ImageIO.read( new File( "GAME/src/TESTING/sun.jpg" ));
-         //originalBackground = ImageIO.read( new File( "GAME/src/TESTING/testStageBackground.jpg" ));
             originalBackground = new ImageIcon(getClass().getClassLoader().getResource( "GAME/src/maps/res/bg.gif" )).getImage();
-            originalStartText = new ImageIcon(getClass().getClassLoader().getResource( "GAME/resources/ready_set_fight.gif" )).getImage();
+            originalStartText = new ImageIcon(getClass().getClassLoader().getResource( "GAME/resources/matchCountdown.gif" )).getImage();        
             originalMap = ImageIO.read( new File( "GAME/src/maps/res/map 1.png" ));
             originalMario = ImageIO.read( new File( "GAME/src/TESTING/8-bit-mario.jpg"));
             originalLuigi = ImageIO.read( new File( "GAME/src/TESTING/8-bit-luigi.png"));
@@ -175,8 +243,8 @@
          mapYCoords = new double[4];
       
          for( int i=0; i<4; i++ ){
-            mapXCoords[i] = (1.0*mapSize.getWidth()/originalMap.getWidth())*(mapPixelXCoords[i]-originalMap.getWidth()/2.0);
-            mapYCoords[i] = (1.0*mapSize.getHeight()/originalMap.getHeight())*(originalMap.getHeight()/2.0-mapPixelYCoords[i]);
+            mapXCoords[i] = (1.0*mapSize.getWidth()/originalMap.getWidth())*(mapPixelXCoords[i]-originalMap.getWidth()*0.5);
+            mapYCoords[i] = (1.0*mapSize.getHeight()/originalMap.getHeight())*(originalMap.getHeight()*0.5-mapPixelYCoords[i]);
          }
       	
          stagePath.moveTo( mapXCoords[0], mapYCoords[0] );
@@ -210,11 +278,12 @@
                new ActionListener(){
                   public void actionPerformed( ActionEvent e ){
                      tCount++;
-                     System.out.println( "Time to start: " + (4 - tCount) );
                   }
                });
       
-      
+         timeFormat = new DecimalFormat( "0.00" );
+         timeFormat.setRoundingMode(RoundingMode.DOWN);
+      	
          System.out.println("Gameplay Initialized");
       
       }
@@ -263,17 +332,19 @@
       }
    
       public void startGame( Timer startTimer){
-         System.out.println("GAME START");
+         
          startTimer.start();
          while( tCount <=3 ){
             renderGame( 0 );
          }
-         clock.stop();
+         startTimer.stop();
          tStart = System.nanoTime();
+         System.out.println("GAME START");
       //Do starting sequence/ countdown
       }
    
       public void endGame(){
+         running = false;
          System.out.println("GAME OVER");
       //Do end sequence 
       //Finalize any endgame data necessary
@@ -281,12 +352,12 @@
    
       public void pauseMatch(){ 
          paused = true;
-         System.out.println("GAME PAUSED");
+         System.out.println("PAUSED");
       }
    
       public void resumeMatch(){
          paused = false;
-         System.out.println("GAME RESUMED");
+         System.out.println("RESUMED");
       }       	
    
    
@@ -328,7 +399,7 @@
             startGame( clock );
             while( !(gameOver) ){
             
-               while(!(paused)){
+               while(!(paused || gameOver)){
                
                   loops = 0;
                
@@ -399,8 +470,13 @@
             }
             else{
             //DEAD
-            //If liveslost<stock
-               p.respawn();
+               if( p.getLivesLost() < numStock ){
+                  p.respawn();
+               }
+               else{
+                  System.out.println("P" + p.getPlayerNumber() + " DEFEATED");
+                  gameOver = true;
+               }
             }
          }
       
@@ -472,14 +548,14 @@
          double penHalfHeight = 0.0;
       //PENETRATION WIDTH            
          if( p1.getVel().getX() > p2.getVel().getX() )
-            penHalfWidth = ((p1.getPos().getX() + p1.width()) - p2.getPos().getX()) / 2.0;
+            penHalfWidth = ((p1.getPos().getX() + p1.width()) - p2.getPos().getX()) *0.5;
          else
-            penHalfWidth = ((p2.getPos().getX() + p2.width()) - p1.getPos().getX()) /2.0;
+            penHalfWidth = ((p2.getPos().getX() + p2.width()) - p1.getPos().getX()) *0.5;
       //PENETRATION HEIGHT
          if( p1.getVel().getY() > p2.getVel().getY() )
-            penHalfHeight = ((p1.getPos().getY() + p1.height()) - p2.getPos().getY()) /2.0;
+            penHalfHeight = ((p1.getPos().getY() + p1.height()) - p2.getPos().getY()) *0.5;
          else
-            penHalfHeight = ((p2.getPos().getY() + p2.height()) - p1.getPos().getY()) /2.0;
+            penHalfHeight = ((p2.getPos().getY() + p2.height()) - p1.getPos().getY()) *0.5;
             
       //Apply Collision Impulse
          if( penHalfHeight > penHalfWidth ){
@@ -653,11 +729,11 @@
       // 3) Draw GUI Overlay
       
       //Calculate Display Coords for Moving Objects
-         p1XDisplayCoord = (int)(this.getWidth()/2.0 + (this.getWidth()*(p1.getPos().getX() + p1.getVel().getX()*interpolation))/mapSize.getWidth() );      
-         p1YDisplayCoord = (int)(this.getHeight()/2.0 - (this.getHeight()*(p1.getPos().getY() + p1.getVel().getY()*interpolation))/mapSize.getHeight()-p1DisplayHeight );
+         p1XDisplayCoord = (int)(this.getWidth()*0.5 + (this.getWidth()*(p1.getPos().getX() + p1.getVel().getX()*interpolation))/mapSize.getWidth() );      
+         p1YDisplayCoord = (int)(this.getHeight()*0.5 - (this.getHeight()*(p1.getPos().getY() + p1.getVel().getY()*interpolation))/mapSize.getHeight()-p1DisplayHeight );
       
-         p2XDisplayCoord = (int)(this.getWidth()/2.0 + (this.getWidth()*(p2.getPos().getX() + p2.getVel().getX()*interpolation))/mapSize.getWidth() );      
-         p2YDisplayCoord = (int)(this.getHeight()/2.0 - (this.getHeight()*(p2.getPos().getY() + p2.getVel().getY()*interpolation))/mapSize.getHeight()-p2DisplayHeight );
+         p2XDisplayCoord = (int)(this.getWidth()*0.5 + (this.getWidth()*(p2.getPos().getX() + p2.getVel().getX()*interpolation))/mapSize.getWidth() );      
+         p2YDisplayCoord = (int)(this.getHeight()*0.5 - (this.getHeight()*(p2.getPos().getY() + p2.getVel().getY()*interpolation))/mapSize.getHeight()-p2DisplayHeight );
       
          repaint();
       
@@ -666,12 +742,14 @@
       public void resizeGraphics(){
       
          pauseMatch();
+      	
+         System.out.println("RESIZING GRAPHICS");
       
       //Just tell the SpriteLoader to resize all of its graphical elements
       //That way, images get handled outside of the Gameplay Class
       //Also helps to disjoint hitboxsize/playercoordinates from displaysize/ display coordinates
       //and allows for hitbox resizing without messing with the images.
-      
+               
       //PLAYERS
          p1DisplayWidth = (int)( p1.width()*this.getPreferredSize().getWidth()/mapSize.getWidth() );
          p1DisplayHeight = (int)( p1.height()*this.getPreferredSize().getHeight()/mapSize.getHeight() );
@@ -686,7 +764,7 @@
          bgDispHeight = (int) this.getPreferredSize().getHeight();
          displayBackground = originalBackground.getScaledInstance( bgDispWidth, bgDispHeight, Image.SCALE_FAST );
       //Start text gif
-         displayStartText = originalStartText.getScaledInstance( (int) bgDispWidth/2, (int)bgDispHeight/2, Image.SCALE_FAST );
+         displayStartText = originalStartText.getScaledInstance( (int)(bgDispWidth*0.5), (int)(bgDispHeight*0.5), Image.SCALE_FAST );
       //MAP TEXTURE
          displayMap = originalMap.getScaledInstance( bgDispWidth, bgDispHeight, Image.SCALE_SMOOTH );
       
@@ -707,32 +785,25 @@
          g2d.drawImage( displayMap, 0, 0, null );
       //Players (Hitboxes, Images, and Stats)
          for( Player p: players ){
-         //int x;
             if( p.getPlayerNumber() == 1 ){   
                g2d.drawImage( displayMario, p1XDisplayCoord, p1YDisplayCoord, null);
-            //g2d.setColor( Color.RED );  
-            //x = 25;
             }
             else{
                g2d.drawImage( displayLuigi, p2XDisplayCoord, p2YDisplayCoord, null);
-            //g2d.setColor( Color.GREEN );
-            //x = 225;
             }
-         //g2d.drawString( "P" + p.getPlayerNumber() + " COORDS: \t" + "( " + Math.round( p.getPos().getX()*100.0 )/100.0 + ", " + Math.round( p.getPos().getY()*100.0 )/100.0 + " )", x, 25 );
-         //g2d.drawString( "      Activity: \t" + p.getActivity(), x, 40);
-         //g2d.drawString( "      Direction: \t" + p.getDirection(), x, 55);
-         //g2d.drawString( "      xMotion: \t" + p.getHorizontalMotion(), x, 70);
-         //g2d.drawString( "      yMotion: \t" + p.getVerticalMotion(), x, 85);
-         //g2d.drawString( "      Life State: \t" + p.getLifeState(), x, 100);
          }
       
-      //Overlays
-         if( tCount <= 3 )
-            g2d.drawImage( displayStartText, (int)((bgDispWidth-displayStartText.getWidth(null))/2), (int)((bgDispHeight-displayStartText.getHeight(null))/2), null );
-      //Time elapsed (seconds)     
-         g2d.setColor( Color.GRAY ); 
-         g2d.drawString( "ELAPSED TIME (s): " + Math.round( ((System.nanoTime()-tStart)/1000000000.0)*10.0 )/10.0, 425, 25 );
-      
+      //Intro
+         if( tCount <= 3 ){
+            g2d.drawImage( displayStartText, (int)((bgDispWidth-displayStartText.getWidth( null ))*0.5), 0, null );  
+         }
+         else{    
+         //Match Time     
+            //g2d.setColor( Color.GRAY ); 
+            //g2d.drawString( "ELAPSED TIME (s): " + timeFormat.format((System.nanoTime()-tStart)*0.000000001), 425, 25);
+            timeLabel.setText( "ELAPSED TIME (s): " + timeFormat.format((System.nanoTime()-tStart)*0.000000001) + "  " );      
+         }
+      	
       }
    
    

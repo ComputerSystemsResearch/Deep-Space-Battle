@@ -1,5 +1,5 @@
    package GAME.src.TESTING;  
-
+   
    import javax.swing.JFrame;
    import javax.swing.JPanel;
 
@@ -23,7 +23,7 @@
    import GAME.src.state.gameplay.*;
    import GAME.src.maps.data.*;
 
-   public class GameplayTester extends JFrame {
+   public class GameplayTester {
    
       private JFrame frame;
       private JPanel container;
@@ -92,7 +92,7 @@
          gameplay.add( mapBoot );  //necessary while Boot is generatng a buffer strategy
          frame.pack();
       
-         System.out.println("GameplayTester Initialized.");
+         System.out.println("GameplayTester Initialized");
       
          gameplay.start();
       

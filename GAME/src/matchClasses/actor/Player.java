@@ -269,7 +269,7 @@
          long tNow = System.nanoTime();
       
          if( jumpCD )
-            if( tNow > jumpT + MatchConstants.JUMP_COOLDOWN )
+            if( tNow > jumpT + MatchConstants.JUMP_CD )
                jumpCD = false;
       
          if( stunCD )
